@@ -9,6 +9,7 @@ on:
 
 jobs:
   test:
+    name: Run automated tests
     runs-on: ubuntu-latest
 
     services:
@@ -16,7 +17,7 @@ jobs:
         image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: task_manager
+          MYSQL_DATABASE: task_manager_test
         ports:
           - 3306:3306
         options: >-
@@ -30,7 +31,7 @@ jobs:
       DB_PORT: 3306
       DB_USER: taskapp
       DB_PASSWORD: TaskPass123!
-      DB_NAME: task_manager
+      DB_NAME: task_manager_test
 
     steps:
       - name: Checkout repository
@@ -45,12 +46,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Prepare test databases
+      - name: Create test database user
         run: |
           mysql -h 127.0.0.1 -uroot -prootpassword -e "
-            CREATE DATABASE IF NOT EXISTS task_manager_test;
             CREATE USER IF NOT EXISTS 'taskapp'@'%' IDENTIFIED BY 'TaskPass123!';
-            GRANT ALL PRIVILEGES ON task_manager.* TO 'taskapp'@'%';
             GRANT ALL PRIVILEGES ON task_manager_test.* TO 'taskapp'@'%';
           "
 
