@@ -10,7 +10,7 @@
   <form method="get" action="/" class="filters">
     <input type="search" name="search" placeholder="Search by title…" value="<%= search %>" maxlength="100">
     <select name="status">
-      <option value="">All statuses</option>
+      <option value="">All Statuses</option>
       <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Pending</option>
       <option value="completed" <%= status === 'completed' ? 'selected' : '' %>>Completed</option>
     </select>
