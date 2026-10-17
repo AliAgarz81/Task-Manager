@@ -1,0 +1,62 @@
+
+name: Task Manager CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: task_manager
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -prootpassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: taskapp
+      DB_PASSWORD: TaskPass123!
+      DB_NAME: task_manager
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare test databases
+        run: |
+          mysql -h 127.0.0.1 -uroot -prootpassword -e "
+            CREATE DATABASE IF NOT EXISTS task_manager_test;
+            CREATE USER IF NOT EXISTS 'taskapp'@'%' IDENTIFIED BY 'TaskPass123!';
+            GRANT ALL PRIVILEGES ON task_manager.* TO 'taskapp'@'%';
+            GRANT ALL PRIVILEGES ON task_manager_test.* TO 'taskapp'@'%';
+          "
+
+      - name: Configure integration test environment
+        run: |
+          printf "DB_HOST=127.0.0.1\nDB_PORT=3306\nDB_USER=taskapp\nDB_PASSWORD=TaskPass123!\nDB_NAME=task_manager_test\n" > .env.test
+
+      - name: Run tests
+        run: npm test
