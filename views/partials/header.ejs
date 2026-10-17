@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> · Task Manager</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="/" class="brand">✔ Task Manager</a>
+      <nav>
+        <a href="/">Dashboard</a>
+        <a href="/tasks/new" class="btn btn-primary btn-sm">+ New task</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>

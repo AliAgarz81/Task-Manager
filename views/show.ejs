@@ -1,0 +1,29 @@
+<%- include('partials/header', { title }) %>
+
+<div class="card form-card">
+  <div class="detail-head">
+    <h1><%= task.title %></h1>
+    <span class="badge badge-<%= task.status %>"><%= task.status %></span>
+  </div>
+
+  <dl class="details">
+    <dt>ID</dt><dd>#<%= task.id %></dd>
+    <dt>Created</dt><dd><%= formatDate(task.created_at) %></dd>
+    <dt>Description</dt>
+    <dd class="pre"><%= task.description || 'No description.' %></dd>
+  </dl>
+
+  <div class="form-actions">
+    <form method="post" action="/tasks/<%= task.id %>/toggle">
+      <input type="hidden" name="returnTo" value="/tasks/<%= task.id %>">
+      <button class="btn"><%= task.status === 'pending' ? 'Mark completed' : 'Mark pending' %></button>
+    </form>
+    <a href="/tasks/<%= task.id %>/edit" class="btn">Edit</a>
+    <form method="post" action="/tasks/<%= task.id %>/delete" data-confirm="Delete this task permanently?">
+      <button class="btn btn-danger">Delete</button>
+    </form>
+    <a href="/" class="btn btn-ghost">Back</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

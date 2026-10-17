@@ -1,0 +1,51 @@
+<%- include('partials/header', { title }) %>
+
+<section class="stats">
+  <div class="card stat"><span class="stat-label">Total tasks</span><span class="stat-value"><%= stats.total %></span></div>
+  <div class="card stat stat-pending"><span class="stat-label">Pending</span><span class="stat-value"><%= stats.pending %></span></div>
+  <div class="card stat stat-completed"><span class="stat-label">Completed</span><span class="stat-value"><%= stats.completed %></span></div>
+</section>
+
+<section class="card toolbar">
+  <form method="get" action="/" class="filters">
+    <input type="search" name="search" placeholder="Search by title…" value="<%= search %>" maxlength="100">
+    <select name="status">
+      <option value="">All statuses</option>
+      <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Pending</option>
+      <option value="completed" <%= status === 'completed' ? 'selected' : '' %>>Completed</option>
+    </select>
+    <button type="submit" class="btn">Apply</button>
+    <% if (search || status) { %><a href="/" class="btn btn-ghost">Reset</a><% } %>
+  </form>
+</section>
+
+<% if (tasks.length === 0) { %>
+  <div class="card empty">
+    <p>No tasks found.</p>
+    <a href="/tasks/new" class="btn btn-primary">Create your first task</a>
+  </div>
+<% } else { %>
+  <ul class="task-list">
+    <% tasks.forEach(task => { %>
+      <li class="card task">
+        <div class="task-main">
+          <a href="/tasks/<%= task.id %>" class="task-title"><%= task.title %></a>
+          <span class="badge badge-<%= task.status %>"><%= task.status %></span>
+          <div class="muted">Created <%= formatDate(task.created_at) %></div>
+        </div>
+        <div class="task-actions">
+          <form method="post" action="/tasks/<%= task.id %>/toggle">
+            <input type="hidden" name="returnTo" value="/">
+            <button class="btn btn-sm"><%= task.status === 'pending' ? 'Mark completed' : 'Mark pending' %></button>
+          </form>
+          <a href="/tasks/<%= task.id %>/edit" class="btn btn-sm">Edit</a>
+          <form method="post" action="/tasks/<%= task.id %>/delete" data-confirm="Delete this task permanently?">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<%- include('partials/footer') %>
